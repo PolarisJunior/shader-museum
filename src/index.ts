@@ -8,7 +8,7 @@ import * as THREE from "three";
   const scene = new THREE.Scene();
   const geometry = new THREE.PlaneBufferGeometry(2, 2);
 
-  const texture = new THREE.TextureLoader().load("../assets/hexagons.png");
+  const texture = new THREE.TextureLoader().load("assets/hexagons.png");
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.minFilter = THREE.LinearFilter;
