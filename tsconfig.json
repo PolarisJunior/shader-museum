@@ -4,6 +4,6 @@
         "module": "es6",
         "noImplicitAny": true,
         "sourceMap": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
     },
 }

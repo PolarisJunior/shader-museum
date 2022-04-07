@@ -1,2 +1,3 @@
-# typescript-template
-A template project for bootstrapping new projects using TypeScript and Webpack. 
+# Shader Museum
+A place to display the shaders I've written.
+Powered by ThreeJS.

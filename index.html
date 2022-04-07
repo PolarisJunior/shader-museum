@@ -1,22 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
 
-<head>
-    <meta charset="utf-8">
+    <title>Shader Museum</title>
+    <meta
+      name="description"
+      content="A place to display the shaders I've written."
+    />
+    <meta name="author" content="PJ Kumlue" />
 
-    <title>Hello World</title>
-    <meta name="description" content="Description">
-    <meta name="author" content="Author">
+    <link rel="stylesheet" href="https://use.typekit.net/urr6anm.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="stylesheets/styles.css" />
+    <script id="vertexShader" type="x-shader/x-vertex">
+      void main() {
+        gl_Position = vec4( position, 1.0 );
+      }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-fragment">
+      #ifdef GL_ES
+        precision mediump float;
+      #endif
 
-    <!-- Materialize -->
-    <link rel="stylesheet" href="stylesheets/styles.css">
+      uniform vec2 u_resolution;
+      uniform vec2 u_mouse;
+      uniform float u_time;
+      uniform sampler2D u_texture;
+      uniform vec3 u_color;
+      uniform vec2 u_tiles;
 
-</head>
+      float triWave(float t, float offset, float yOffset) {
+          return clamp(abs(fract(offset + t) * 2. - 1.) + yOffset, 0., 1.);
+      }
 
-<body>
-    <div id="terminal"></div>
-    <p>Hello World</p>
+      vec4 texColor() {
+          return vec4(0.);
+      }
+
+      void main() {
+          vec3 color_offset = vec3(.05);
+          vec2 st = gl_FragCoord.xy/u_resolution.xy;
+          vec2 original_st = st;
+          st = fract(st.xy * u_tiles.xy);
+          vec4 samp = texture2D(u_texture, st);
+
+          vec2 center = vec2(0.5);
+          float dist_from_center = distance(original_st, center);
+          float waves = samp.r * triWave(u_time * .35, abs(1. - dist_from_center * 0.6) * 2., -0.7) * 6.;
+
+          vec3 hex_lines = samp.x * u_color;
+
+          float glow = sin(u_time + samp.b * 5.) + 1.;
+          glow *= samp.g;
+
+          vec3 final_color = hex_lines + vec3(waves) * u_color + vec3(glow) * u_color;
+          vec3 min_color = vec3(0.1);
+          if (dot(min_color, min_color) > dot(final_color, final_color)) {
+      //                final_color = min_color;
+          }
+
+          gl_FragColor = vec4(final_color, 1);
+      }
+    </script>
+  </head>
+
+  <body class="text-gray-800">
+    <h1 class="text-center py-12 font-extrabold text-5xl border-b">Shader Museum</h1>
+    <div id="stage" class="max-w-full h-96 mx-auto"></div>
     <script type="module" src="dist/bundle.js"></script>
-</body>
-
+  </body>
 </html>
